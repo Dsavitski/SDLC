@@ -1,0 +1,77 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+
+interface ModelListener {
+    +onModelChanged()
+}
+
+class Main {
+    +main(args: String[])
+}
+
+class AgeView {
+    -btnEnter: JButton
+    -resultArea: JTextArea
+    -inputDialog: JDialog
+    -tfDay: JTextField
+    -tfMonth: JTextField
+    -tfYear: JTextField
+    -btnOk: JButton
+    -btnCancel: JButton
+    +getBtnEnter(): JButton
+    +getBtnOk(): JButton
+    +getBtnCancel(): JButton
+    +getInputDialog(): JDialog
+    +getTfDay(): JTextField
+    +getTfMonth(): JTextField
+    +getTfYear(): JTextField
+    +showResult(text: String)
+    +showError(message: String)
+    +fillDialog(day: String, month: String, year: String)
+    +clearDialog()
+}
+
+class AgeController {
+    -model: AgeModel
+    -view: AgeView
+    +AgeController(model: AgeModel, view: AgeView)
+    -bind()
+    -onOk()
+    -displayResults()
+    +onModelChanged()
+}
+
+class AgeModel {
+    -birthDate: LocalDate
+    -prefs: Preferences
+    -listeners: List<ModelListener>
+    +addListener(listener: ModelListener)
+    +removeListener(listener: ModelListener)
+    -notifyListeners()
+    +setBirthDate(day: int, month: int, year: int)
+    +getBirthDate(): LocalDate
+    +restoreLastInput(): boolean
+    +getYears(): int
+    +getMonths(): int
+    +getDays(): int
+    +getTotalDays(): long
+    +getTotalMinutes(): long
+    +getCupsOfCoffee(): double
+    +getTvEpisodes(): double
+    +getSocialFeedKm(): double
+}
+
+Main --> AgeModel : creates
+Main --> AgeView : creates
+Main --> AgeController : creates
+
+AgeController ..|> ModelListener : implements
+AgeModel o--> "*" ModelListener : listeners
+AgeModel --> ModelListener : notifies
+AgeController --> AgeModel : updates
+AgeController --> AgeView : manages
+AgeView --> AgeController : requests input
+AgeController --> AgeView : reads state
+
+@enduml
